@@ -18,8 +18,7 @@ Two other files in this repo apply and must be read before working on the app:
 - `AGENTS.md`: development rules (stack, architecture, UX and code-quality expectations).
 - `DESIGN.md`: the design system (tokens, typography, spacing, component specs, charts).
 
-**Status:** the repo is still the stock Expo template. The build phases below track what to build
-next. Keep the "Current state" line at the bottom of this file up to date as phases land.
+**Status:** see "Current state" at the bottom and the build phases below. Keep the "Current state" line at the bottom of this file up to date as phases land.
 
 ---
 
@@ -29,8 +28,8 @@ next. Keep the "Current state" line at the bottom of this file up to date as pha
   build, not Expo Go, once native modules are added.
 - `npm run ios` / `npm run android`: start the dev server and open a simulator or emulator.
 - `npm run lint`: ESLint through `expo lint` (`eslint.config.js`, `eslint-config-expo`).
-- `npm run typecheck`: `tsc --noEmit`. **Phase 0 adds this script.**
-- `npm test`: Jest via `jest-expo` with `@testing-library/react-native`. **Phase 0 adds this.**
+- `npm run typecheck`: `tsc --noEmit`.
+- `npm test`: Jest via `jest-expo` with `@testing-library/react-native`.
 - EAS (`eas.json`) build profiles:
   - `development`: dev client, internal distribution.
   - `preview`: internal distribution.
@@ -58,7 +57,7 @@ Versions in `package.json` are authoritative.
 |---|---|
 | Runtime | Expo SDK 58, React Native 0.88, React 19.3, React Compiler on (`app.json` experiments) |
 | Routing | expo-router with typed routes (`experiments.typedRoutes`) |
-| Styling | NativeWind v5 (Tailwind CSS v4), with tokens in `global.css` (see `DESIGN.md`) |
+| Styling | NativeWind `5.0.0-rc.0` (Tailwind CSS v4) on `react-native-css` `3.1.0-rc.0`, with tokens in `global.css` (see `DESIGN.md`). Both are pre-releases; `lightningcss` is pinned to exactly `1.30.1` because newer versions break the compiler. Don't bump any of the three without a bundle check (`npx expo export`). |
 | Server state | `@tanstack/react-query` v5 |
 | Forms | `react-hook-form` + `zod` v4 (`@hookform/resolvers`) |
 | Token storage | `expo-secure-store` |
@@ -285,4 +284,23 @@ These are outside this repo; they live in `finance-app/backend`, tracked in its
 
 ## Current state
 
-Phase 0 has not started. The repo contains only the Expo template.
+**Phase 0 (foundation) is done.**
+
+- The template demo files are removed.
+- App renamed to Finch: scheme `finch`, iOS and Android id `com.j0ec0de.finch`. The `slug` stays
+  `my-app` on purpose: the EAS project is linked to it.
+- Stack installed. `expo-doctor`, `typecheck`, `lint` and `npm test` pass, and Android and iOS
+  bundle.
+- Tokens are in `global.css` and `constants/theme.ts`, with Geist loaded in the root layout.
+- Primitives are in `components/ui/` (Button, Input, Card, Badge, Meter, StatTile, ListRow,
+  EmptyState, Skeleton) plus `BrandMark`.
+- The `app/(app)/(tabs)` shell has the 5 tabs as placeholder screens. The `QueryClient` is set up
+  in `lib/query-client.ts`.
+
+**Not done yet**
+
+- Nothing has been run on a simulator or device. The styling is verified only by the bundle compiling.
+- App icon, adaptive icon and splash images are still the template's. They need regenerating from
+  the PiggyBank mark.
+- No auth and no API layer; both are Phase 1.
+- A manual `.env.local` value for `EXPO_PUBLIC_API_URL` is still needed.

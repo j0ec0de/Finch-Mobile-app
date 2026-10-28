@@ -1,53 +1,52 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * JS mirror of the tokens in global.css, for places classes can't reach
+ * (charts, the react-navigation theme, StatusBar). Keep both files in sync (see DESIGN.md).
  */
-
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    background: '#ffffff',
+    foreground: '#0a0a0a',
+    card: '#ffffff',
+    cardForeground: '#0a0a0a',
+    primary: '#171717',
+    primaryForeground: '#fafafa',
+    secondary: '#f5f5f5',
+    muted: '#f5f5f5',
+    mutedForeground: '#737373',
+    destructive: '#e7000b',
+    border: '#e5e5e5',
+    input: '#e5e5e5',
+    ring: '#a1a1a1',
+    statusGood: '#0ca30c',
+    statusCritical: '#d03b3b',
+    chart: ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#4a3aa7'],
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    background: '#0a0a0a',
+    foreground: '#fafafa',
+    card: '#171717',
+    cardForeground: '#fafafa',
+    primary: '#e5e5e5',
+    primaryForeground: '#171717',
+    secondary: '#262626',
+    muted: '#262626',
+    mutedForeground: '#a1a1a1',
+    destructive: '#ff6467',
+    border: 'rgba(255,255,255,0.1)',
+    input: 'rgba(255,255,255,0.15)',
+    ring: '#737373',
+    statusGood: '#0ca30c',
+    statusCritical: '#e66767',
+    chart: ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#9085e9'],
   },
-};
+} as const;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export type ColorScheme = keyof typeof Colors;
+export type ThemeColors = (typeof Colors)[ColorScheme];
+
+export const Fonts = {
+  regular: 'Geist_400Regular',
+  medium: 'Geist_500Medium',
+  semibold: 'Geist_600SemiBold',
+} as const;
