@@ -17,24 +17,21 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { queryClient } from '@/lib/query-client';
 
 SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  anchor: '(app)',
-};
-
-export default function RootLayout() {
+function RootNavigator() {
   const { scheme, colors } = useTheme();
+  const { token, isLoading } = useAuth();
   const [fontsLoaded, fontError] = useFonts({
     Geist_400Regular,
     Geist_500Medium,
     Geist_600SemiBold,
   });
-  // Phase 1 adds the auth session to this condition.
-  const ready = fontsLoaded || !!fontError;
+  const ready = (fontsLoaded || !!fontError) && !isLoading;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
@@ -56,16 +53,29 @@ export default function RootLayout() {
   };
 
   return (
+    <ThemeProvider value={navTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={!token}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!!token}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+      </Stack>
+      <StatusBar style="auto" />
+      <Toaster />
+    </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={navTheme}>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(app)" />
-            </Stack>
-            <StatusBar style="auto" />
-            <Toaster />
-          </ThemeProvider>
+          <AuthProvider>
+            <RootNavigator />
+          </AuthProvider>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

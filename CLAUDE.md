@@ -62,7 +62,7 @@ Versions in `package.json` are authoritative.
 | Forms | `react-hook-form` + `zod` v4 (`@hookform/resolvers`) |
 | Token storage | `expo-secure-store` |
 | Lists | `@shopify/flash-list` |
-| Charts | `victory-native` (Skia, needs `@shopify/react-native-skia`) |
+| Charts | `victory-native` pinned to exactly `42.0.1` (Skia, on Expo's `@shopify/react-native-skia`), plus `react-native-svg` for the gauge. Don't upgrade to 43: it depends on the renamed `react-native-skia` package, which installs a second native Skia copy next to Expo's. |
 | Icons | `lucide-react-native` + `react-native-svg`, the same icon set as the web |
 | Toasts | `sonner-native`, the same API as the web's `sonner` |
 | Font | Geist, loaded with `expo-font` |
@@ -172,6 +172,11 @@ clients stay easy to diff:
 | `auth.ts`, `accounts.ts`, `categories.ts`, `transactions.ts`, `transfers.ts`, `budgets.ts`, `goals.ts` | Typed resource clients, entity types, enum arrays (`accountTypes`, `currencies`, `budgetPeriods`, `transactionTypes`), `buildQuery`. Copy as-is. |
 | `format.ts` | `formatCurrency` (`Intl.NumberFormat`) and `calcDeltaPct`. Check currency output on Android Hermes. |
 | `date-range.ts` | `getMonthRange`, `getLastNDaysRange`, `getLastNMonthsRange`, `getMonthLabel`. Copy as-is. |
+
+Mobile-only additions (keep them clearly marked, they have no web equivalent): `getTransaction` in
+`lib/transactions.ts`, `useInfiniteTransactions` and `useTransaction` in `hooks/use-transactions.ts`,
+and the 401 hook (`setUnauthorizedHandler`) plus network-error handling in `lib/api.ts`.
+`lib/dashboard.ts` holds the pure helpers extracted from the web dashboard components.
 
 Rules:
 
@@ -284,23 +289,32 @@ These are outside this repo; they live in `finance-app/backend`, tracked in its
 
 ## Current state
 
-**Phase 0 (foundation) is done.**
+**Phase 0 (foundation) is done. Phase 1 (core) is built but untested on a device.**
 
-- The template demo files are removed.
-- App renamed to Finch: scheme `finch`, iOS and Android id `com.j0ec0de.finch`. The `slug` stays
-  `my-app` on purpose: the EAS project is linked to it.
-- Stack installed. `expo-doctor`, `typecheck`, `lint` and `npm test` pass, and Android and iOS
-  bundle.
-- Tokens are in `global.css` and `constants/theme.ts`, with Geist loaded in the root layout.
-- Primitives are in `components/ui/` (Button, Input, Card, Badge, Meter, StatTile, ListRow,
-  EmptyState, Skeleton) plus `BrandMark`.
-- The `app/(app)/(tabs)` shell has the 5 tabs as placeholder screens. The `QueryClient` is set up
-  in `lib/query-client.ts`.
+Phase 1 delivers:
 
-**Not done yet**
+- **Auth:** sign in and sign up (`features/auth/`), the token kept in SecureStore, session restore
+  behind the splash screen, `Stack.Protected` routing, and sign-out clearing the query cache. A 401
+  on an authenticated request signs the user out.
+- **API layer:** `lib/` and `hooks/` ported from the web.
+- **Home:** all six dashboard cards (`features/dashboard/`) with pull-to-refresh.
+- **Transactions:** an infinite list with account and type filters, and add/edit/delete form
+  sheets. Transfer legs open read-only with a delete action.
+- **Accounts:** list, add, edit and delete, reached from the More tab.
+- **More tab:** shows the user and has Sign out.
 
-- Nothing has been run on a simulator or device. The styling is verified only by the bundle compiling.
-- App icon, adaptive icon and splash images are still the template's. They need regenerating from
-  the PiggyBank mark.
-- No auth and no API layer; both are Phase 1.
-- A manual `.env.local` value for `EXPO_PUBLIC_API_URL` is still needed.
+Checks: typecheck, lint and expo-doctor pass, 19 unit tests pass, and Android and iOS bundle. No
+screen has been run on a simulator or device yet.
+
+**Known gaps and deliberate deferrals**
+
+- **Chart press-to-inspect:** `DESIGN.md` specifies it, but Phase 1 charts are static with a summary
+  `accessibilityLabel`. Add it in the Phase 3 charts pass.
+- **Categories:** there is no category UI until Phase 2, and the backend has no default categories
+  (item #11). Until then, transactions can only use categories created on the web.
+- **Transfers:** creating a transfer is Phase 2. Existing transfers display correctly.
+- **Budgets and goals:** the Home cards read them, but they can only be created on the web until Phase 2.
+- **Brand assets:** the app icon, adaptive icon and splash image are still the template's.
+- **`.env.local`:** needs `EXPO_PUBLIC_API_URL` filled in.
+- **Edit-form limits:** the API cannot clear a transaction's category or description (its PATCH
+  schema rejects null and empty values), so the edit form can only change them, not remove them.

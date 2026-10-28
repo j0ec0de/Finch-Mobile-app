@@ -21,11 +21,15 @@ export function StatTile({ label, value, delta, invertDelta }: StatTileProps) {
   const Icon = up ? TrendingUp : TrendingDown;
 
   return (
-    <View className="flex-1 gap-1">
+    <View className="gap-1">
       <Text maxFontSizeMultiplier={1.5} className="text-sm text-muted-foreground">
         {label}
       </Text>
-      <Text maxFontSizeMultiplier={1.5} className="text-2xl font-semibold text-foreground tabular-nums">
+      <Text
+        maxFontSizeMultiplier={1.5}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        className="text-2xl font-semibold text-foreground tabular-nums">
         {value}
       </Text>
       {delta !== undefined ? (

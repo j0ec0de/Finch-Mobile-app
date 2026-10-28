@@ -1,8 +1,10 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ComponentRef } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { cn } from '@/components/cn';
 import { useTheme } from '@/hooks/use-theme';
+
+export type InputRef = ComponentRef<typeof TextInput>;
 
 type InputProps = ComponentProps<typeof TextInput> & {
   label: string;

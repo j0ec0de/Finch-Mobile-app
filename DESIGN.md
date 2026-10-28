@@ -212,7 +212,7 @@ The primitives live in `components/ui/`. Build each once and reuse it.
 
 ## Charts
 
-The charts use `victory-native` (Skia). Colors come from `constants/theme.ts` (`chart-1` …
+The charts use `victory-native` (Skia); the gauge uses `react-native-svg`. Colors come from `constants/theme.ts` (`chart-1` …
 `chart-6`) for the current scheme, never from literals.
 
 | Web chart | Mobile version |
@@ -221,14 +221,14 @@ The charts use `victory-native` (Skia). Colors come from `constants/theme.ts` (`
 | Income vs expense trend (Insights) | Monotone line, 2pt stroke, no dots, `chart-1` / `chart-2` |
 | Category breakdown (Insights) | Horizontal bars, top 8 categories, `chart-1`…`chart-6` cycled by rank |
 | Cost analysis (Home) | One stacked horizontal bar plus a legend list (dot · name · % · amount) |
-| Financial health (Home) | Half-ring gauge drawn in Skia: track `muted`, value colored by state, percent saved in the middle |
+| Financial health (Home) | Half-ring gauge drawn with `react-native-svg`: track `muted`, value colored by state, percent saved in the middle |
 
 Every chart follows these rules:
 
 - **Size:** full card width, never horizontal scrolling, 200pt tall by default.
 - **Axes:** labels `text-xs` in `muted-foreground`; gridlines a hairline `border` color,
   horizontal only; no axis lines.
-- **Inspecting values:** press and drag to see the value, a vertical guide line and a small
+- **Inspecting values (planned, Phase 3; not built yet):** press and drag to see the value, a vertical guide line and a small
   `bg-card` label with the date and formatted amount. A light haptic tick on each new point.
 - **Legend:** a dot plus the label, under the chart, only when there are two or more series.
 - **Empty data:** show the card's empty line ("No transactions in this period"), never an empty
